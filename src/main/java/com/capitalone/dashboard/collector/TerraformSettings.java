@@ -18,6 +18,16 @@ public class TerraformSettings {
     private String proxyPassword;
     @Value("${iac.cron}")
     private String cron;
+    
+    @Value("${iac.cloudapp.url}")
+    private String terraformApiUrl;
+    
+	public String getTerraformApiUrl() {
+		return terraformApiUrl;
+	}
+	public void setTerraformApiUrl(String terraformApiUrl) {
+		this.terraformApiUrl = terraformApiUrl;
+	}
 	public String getProxy() {
 		return proxy;
 	}

@@ -21,10 +21,10 @@
   </organization>
 
   <scm>
-    <connection>scm:git:https://github.com/Hygieia/hygieia-scm-github-collector.git</connection>
-    <developerConnection>scm:git:https://github.com/Hygieia/hygieia-scm-github-collector.git
+    <connection>scm:git:https://github.com/Hygieia/hygieia-iac-terraform-collector.git</connection>
+    <developerConnection>scm:git:https://github.com/Hygieia/hygieia-iac-terraform-collector.git
     </developerConnection>
-    <url>https://github.com/Hygieia/hygieia-scm-github-collector</url>
+    <url>https://github.com/Hygieia/hygieia-iac-terraform-collector</url>
   </scm>
 
   <distributionManagement>
@@ -39,7 +39,7 @@
     <site>
       <id>c1.maven.plugins.website</id>
       <name>Capital One Maven Plugins Site</name>
-      <url>scm:git:https://${github.username}@github.com/Hygieia/hygieia-scm-github-collector</url>
+      <url>scm:git:https://${github.username}@github.com/Hygieia/hygieia-iac-terraform-collector</url>
     </site>
   </distributionManagement>
 
@@ -71,7 +71,7 @@
     <maven.site.plugin.version>3.7.1</maven.site.plugin.version>
     <mockito.all.version>1.10.19</mockito.all.version>
     <org.joda.joda-convert.version>1.8.1</org.joda.joda-convert.version>
-    <site.publish.url>https://github.com/Hygieia/hygieia-scm-github-collector</site.publish.url>
+    <site.publish.url>https://github.com/Hygieia/hygieia-iac-terraform-collector</site.publish.url>
     <site.publish.checkout.directory>site-content</site.publish.checkout.directory>
     <spotbugs.plugin.version>3.1.11</spotbugs.plugin.version>
     <svnkit.version>1.8.7</svnkit.version>
@@ -79,7 +79,7 @@
 
   <issueManagement>
     <system>github</system>
-    <url>https://github.com/Hygieia/hygieia-scm-github-collector/issues</url>
+    <url>https://github.com/Hygieia/hygieia-iac-terraform-collector/issues</url>
   </issueManagement>
 
   <developers>
@@ -229,7 +229,7 @@
           <skip>${japicmp.skip}</skip>
         </configuration>
       </plugin>
-      <plugin>
+       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven.checkstyle.plugin.version}</version>
@@ -241,7 +241,7 @@
           <failsOnError>true</failsOnError>
           <linkXRef>false</linkXRef>
         </configuration>
-       <!--  <executions>
+       <!-- <executions>
           <execution>
             <id>validate</id>
             <phase>validate</phase>
@@ -528,7 +528,7 @@
           <template>release-notes.vm</template>
           <templateDirectory>src/changes</templateDirectory>
           <issueLinkTemplatePerSystem>
-            <github>http://github.com/Hygieia/hygieia-scm-github-collector/issues/%ISSUE%</github>
+            <github>http://github.com/Hygieia/hygieia-iac-terraform-collector/issues/%ISSUE%</github>
           </issueLinkTemplatePerSystem>
         </configuration>
         <reportSets>

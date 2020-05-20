@@ -63,8 +63,6 @@ public class TerraformCollectorTask extends CollectorTask<Collector> {
 	
 	 
 	
-	private final String TERRAFORM_API_URL = "http://app.terraform.io/api/v2";
-
 	private final String ORGANIZATION_URI = "/organizations";
 
 	private final String WORKSPACE_URI = "/workspaces";
@@ -122,7 +120,7 @@ public class TerraformCollectorTask extends CollectorTask<Collector> {
 	@Override
 	public String getCron() {
 		
-		return "0/1 * * * * ?";
+		return terraformSetting.getCron();
 	}
 
 	@Override
@@ -146,7 +144,7 @@ public class TerraformCollectorTask extends CollectorTask<Collector> {
 			String urlStr = null;
 
 			try {
-				urlStr = TERRAFORM_API_URL + ORGANIZATION_URI;
+				urlStr = terraformSetting.getTerraformApiUrl() + ORGANIZATION_URI;
 				LOG.debug("Making API Call (Organization) @ " + urlStr);
 				JSONObject organizationsObject = (JSONObject) terraformClient.getData(urlStr, apiToken);
 				LOG.debug("Recieved API Call Data (Organization) @ " + organizationsObject);
@@ -162,7 +160,7 @@ public class TerraformCollectorTask extends CollectorTask<Collector> {
 
 						String orgId = saveOrganizationIfNotExists(terraformCollectorItem.getId(), organizationObject);
 
-						urlStr = TERRAFORM_API_URL + ORGANIZATION_URI + "/" + orgId + WORKSPACE_URI;
+						urlStr = terraformSetting.getTerraformApiUrl()  + ORGANIZATION_URI + "/" + orgId + WORKSPACE_URI;
 						LOG.debug("Making API Call (Workspace) @ " + urlStr);
 						JSONObject workspacesObject = (JSONObject) terraformClient.getData(urlStr, apiToken);
 						LOG.debug("Recieved API Call Data (Workspace) @ " + workspacesObject);
@@ -179,7 +177,7 @@ public class TerraformCollectorTask extends CollectorTask<Collector> {
 								String wsId = saveWorkspaceIfNotExists(orgId, workspaceObject);
 
 								JSONObject runsObject = (JSONObject) terraformClient
-										.getData(TERRAFORM_API_URL + WORKSPACE_URI + "/" + wsId + RUN_URI, apiToken);
+										.getData(terraformSetting.getTerraformApiUrl()  + WORKSPACE_URI + "/" + wsId + RUN_URI, apiToken);
 								if (runsObject != null) {
 									/*
 									 * Read the runs and update
@@ -243,7 +241,7 @@ public class TerraformCollectorTask extends CollectorTask<Collector> {
 			return Id;
 		} catch (java.text.ParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Error saving Organization:" + e);
 			return null;
 		}
 	}
@@ -270,7 +268,7 @@ public class TerraformCollectorTask extends CollectorTask<Collector> {
 			return Id;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Error saving Workspace:" + e);
 			return null;
 		}
 	}
@@ -299,7 +297,7 @@ public class TerraformCollectorTask extends CollectorTask<Collector> {
 		} catch (java.text.ParseException e) {
 			// TODO Auto-generated catch block
 			
-			e.printStackTrace();
+			LOG.error("Error saving Run:" + e);
 			return null;
 		}
 	}

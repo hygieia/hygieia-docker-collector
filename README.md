@@ -1,5 +1,3 @@
-## [WIP] - Hygieia collector for Terraform
-## [WIP] - Hygieia collector for Terraform
 <h3>A collector to showcase the Terraform Cloud App details</h3>
 https://app.terraform.io
 
@@ -23,6 +21,9 @@ https://app.terraform.io
   TerraformCollectorTask : As with the framework , implemeting Collector Task to regulary collect the details from Terraform Cloud App     and feed into the MongoDb
   TeraafromServiceImpl: To populate the componentData mdel and send back to UI
   TerraformCustomRepository: A MongoTemplate based repository, to do some aggrrgate group by queries against mondo db
+  
+  <h3>To build docker & mounting the application.properties while docker build</h3>
+  docker run -t -i -p port-internal:port-external -v properties_location://hygieia/config  image_name
 
 
 

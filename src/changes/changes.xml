@@ -32,11 +32,11 @@ The <action> type attribute can be add,update,fix,remove.
 
 <document>
     <properties>
-        <title>Hygieia Github Collector Changes</title>
+        <title>Hygieia IAC Terraform Collector Changes</title>
     </properties>
     <body>
 
-        <release version="3.1.0" date="YYYY-MM-DD" description="----">
+        <release version="1.0.0" date="2020-05-20" description="">
             <action issue="62" type="add" dev="chtompki">Add maven site.</action>
             <action issue="63" type="add" dev="chtompki">Add maven-changes-plugin</action>
         </release>

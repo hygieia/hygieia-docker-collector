@@ -16,21 +16,9 @@ dbusername=${HYGIEIA_API_ENV_SPRING_DATA_MONGODB_USERNAME:-dashboarduser}
 dbpassword=${HYGIEIA_API_ENV_SPRING_DATA_MONGODB_PASSWORD:-dbpassword}
 
 #Collector schedule (required)
-github.cron=${GITHUB_CRON:-0 0/5 * * * *}
+iac.cron=${IAC_CRON:-* * 0/60 * * *}
 
-github.host=${GITHUB_HOST:-github.com}
-
-#Maximum number of days to go back in time when fetching commits
-github.commitThresholdDays=${GITHUB_COMMIT_THRESHOLD_DAYS:-15}
-
-#Optional: Error threshold count after which collector stops collecting for a collector item. Default is 2.
-github.errorThreshold=${GITHUB_ERROR_THRESHOLD:-1}
-
-#This is the key generated using the Encryption class in core
-github.key=${GITHUB_KEY}
-
-#personal access token generated from github and used for making authentiated calls
-github.personalAccessToken=${PERSONAL_ACCESS_TOKEN}
+iac.cloudapp.url=${IAC_CLOUDAPP_URL:-http://app.terraform.io/api/v2}
 
 EOF
 

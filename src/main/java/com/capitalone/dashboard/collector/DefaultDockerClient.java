@@ -30,15 +30,49 @@ import com.capitalone.dashboard.util.Supplier;
  */
 
 @Component
-public class DefaultTerraformClient implements TerraformClient {
-    private static final Log LOG = LogFactory.getLog(DefaultTerraformClient.class);
+public class DefaultDockerClient implements DockerClient {
+    private static final Log LOG = LogFactory.getLog(DefaultDockerClient.class);
     private final RestTemplate restTemplate ;
     MultiValueMap<String, String> headerMultiValueMap;
     HttpEntity<String> httpEntity;
 
     @Autowired
-    public DefaultTerraformClient(Supplier<RestOperations> restOperationsSupplier) {
+    public DefaultDockerClient(Supplier<RestOperations> restOperationsSupplier) {
         this.restTemplate =  new RestTemplate();
+    }
+    
+    /**
+     * Gets runs for a given Workspace
+     * @param url
+     * @param apiToken
+     * @throws RestClientException
+     * @throws MalformedURLException
+     * @throws HygieiaException
+     */
+    public JSONObject getDataAsObject(String url) throws RestClientException, MalformedURLException, HygieiaException{
+    	LOG.debug("Making rest call to URL ::" + url);
+    	ResponseEntity<String> responseJSON = makeRestCall(url);
+    	if (responseJSON != null) 
+    		return parseAsObject(responseJSON);
+    	else
+    		return null;
+    }
+    
+    /**
+     * Gets runs for a given Workspace
+     * @param url
+     * @param apiToken
+     * @throws RestClientException
+     * @throws MalformedURLException
+     * @throws HygieiaException
+     */
+    public JSONArray getDataAsArray(String url) throws RestClientException, MalformedURLException, HygieiaException{
+    	LOG.debug("Making rest call to URL ::" + url);
+    	ResponseEntity<String> responseJSON = makeRestCall(url);
+    	if (responseJSON != null) 
+    		return parseAsArray(responseJSON);
+    	else
+    		return null;
     }
     
     /**
@@ -60,8 +94,14 @@ public class DefaultTerraformClient implements TerraformClient {
     
     
     private ResponseEntity<String> makeRestCall(String url, String apiToken) {
-        // Basic Auth only.
+        // No Auth
             return restTemplate.exchange(url, HttpMethod.GET,getHeaders(apiToken),String.class);
+    }
+    
+    
+    private ResponseEntity<String> makeRestCall(String url) {
+    	// Basic Auth only.
+    	return restTemplate.exchange(url, HttpMethod.GET,null,String.class);
     }
     
     private HttpEntity<String> getHeaders(final String apiToken) {
@@ -106,6 +146,16 @@ public class DefaultTerraformClient implements TerraformClient {
         Object value = json.get(key);
         return value == null ? null : value.toString();
     }
+    
+	
+	public JSONArray getJSONArray(JSONObject obj, String key) {
+		if(obj.containsKey(key))
+			return (JSONArray) obj.get(key);
+		
+		return null;
+	}
+
+	
 
     /**
      * Date utility

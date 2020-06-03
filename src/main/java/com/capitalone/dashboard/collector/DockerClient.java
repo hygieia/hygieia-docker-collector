@@ -10,7 +10,7 @@ import com.capitalone.dashboard.misc.HygieiaException;
 /**
  * Client for fetching the Terraform Cloud App data
  */
-public interface TerraformClient {
+public interface DockerClient {
 
 	JSONObject getData(String uri, String apiToken) throws MalformedURLException, RestClientException, HygieiaException;
 

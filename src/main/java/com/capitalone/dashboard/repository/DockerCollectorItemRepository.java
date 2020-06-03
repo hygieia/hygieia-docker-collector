@@ -7,13 +7,9 @@ import org.springframework.data.mongodb.repository.Query;
 
 import com.capitalone.dashboard.model.CollectorItem;
 
-public interface TerraformCollectorItemRepository extends BaseCollectorItemRepository<CollectorItem> {
+public interface DockerCollectorItemRepository extends BaseCollectorItemRepository<CollectorItem> {
 
-	@Query(value = "{ 'id' : ?0}")
-	CollectorItem findTerraformCollectorinfrastructureAsCode(ObjectId id);
-
-	@Query(value = "{ 'collectorId' : ?0, enabled: true}")
-	List<CollectorItem> findTerraformItemCollectorByCollectorItemId(ObjectId collectorItemId);
+	 
 
 	@Query(value = "{ 'collectorId' : ?0, enabled: true}")
 	List<CollectorItem> findByCollectorId(ObjectId collectorId);

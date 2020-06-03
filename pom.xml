@@ -2,7 +2,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.capitalone.dashboard</groupId>
-  <artifactId>hygieia-iac-terraform-collector</artifactId>
+  <artifactId>hygieia-docker-collector</artifactId>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Terraform Cloud App Collector</description>
   <url>https://hygieia.github.io/Hygieia/getting_started.html</url>
@@ -290,7 +290,7 @@
         <artifactId>docker-maven-plugin</artifactId>
         <configuration>
           <skipDockerBuild>false</skipDockerBuild>
-          <imageName>hygieia-iac-terraform-collector</imageName>
+          <imageName>hygieia-docker-collector</imageName>
           <dockerDirectory>${project.basedir}/docker</dockerDirectory>
           <resources>
             <resource>

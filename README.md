@@ -16,7 +16,7 @@ https://docs.docker.com/engine/api/v1.24/
   <h3>To build docker & mounting the application.properties while docker build</h3>
   docker run -t -i -p port-internal:port-external -v properties_location://hygieia/config  image_name
 
-<img src="./screens/screen_1.png" />
+
 
 
 docker network create -d bridge my-bridge-network
@@ -52,3 +52,8 @@ https://docs.docker.com/engine/api/v1.21/
 
 
 
+<img src="./screens/screen_1.png" />
+<img src="./screens/screen_2.png" />
+<img src="./screens/screen_3.png" />
+<img src="./screens/screen_4.png" />
+<img src="./screens/screen_5.png" />

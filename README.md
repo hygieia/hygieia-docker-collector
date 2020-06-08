@@ -1,3 +1,24 @@
+
+<h3>A collector to showcase the Docker Container details</h3>
+https://docs.docker.com/engine/api/v1.24/
+
+<h3>How is Docker App Organized?</h3>
+ Each Docker app has Daemon
+  The Daemon facillitates the API
+  Down end the APIS are given.
+
+<h3>Technical Description</h3>
+  The Classes and the description
+  Docker Controller: To expose the api calls made from UI to get the Component Data
+  DockerCollectorTask : As with the framework , implemeting Collector Task to regulary collect the details from Docker container  and feed into the MongoDb
+  DockerServiceImpl: To populate the componentData mdel and send back to UI
+  
+  <h3>To build docker & mounting the application.properties while docker build</h3>
+  docker run -t -i -p port-internal:port-external -v properties_location://hygieia/config  image_name
+
+<img src="./screens/screen_1.png" />
+
+
 docker network create -d bridge my-bridge-network
 
 docker create -v /data --name data ubuntu
@@ -27,37 +48,6 @@ http://3.15.18.4:5555/v1.24/containers/3142cca77641d75d4c5629e6cf4c6503a19e65cd7
 {"Processes":[["999","9610","9580","0","06:21","?","00:00:06","redis-server *:6379"]],"Titles":["UID","PID","PPID","C","STIME","TTY","TIME","CMD"]}
 
 https://docs.docker.com/engine/api/v1.21/
-
-
-
-
-
-<h3>A collector to showcase the Terraform Cloud App details</h3>
-https://app.terraform.io
-
-<h3>How is Terraform App Organized?</h3>
- Each Terraform app has Organization > Workspace > run jobs
- * Organization : Model to store the Organization details from Terraform Cloud App
- * Workspace : Model to Store Workpsace belonging to an Organizatiion from Terrafrom Cloud App
- * Run : Model to Store Runs belonging to an Workpsace from Terrafrom Cloud App
- * TerraformCollectorItem: The class extending the CollectorItem storing only the apiToken, which is enough to call the Terraform Cloud   Apis
-
-<h3>Which API this collector calls?</h3>
-  The Workspace Cloud App by Terraform provide REST api to call and share details about Organizatiion, Workspace & Run Jobs
-
-<h3>What data this collector Stores?</h3>
-  This Collector stores data as Organization, Workspace & Run (The same model are provided in domain)
-  https://www.terraform.io/docs/cloud/api/workspaces.html
-
-<h3>Technical Description</h3>
-  The Classes and the description
-  Terraform Controller: To expose the api calls made from UI to get the Component Data
-  TerraformCollectorTask : As with the framework , implemeting Collector Task to regulary collect the details from Terraform Cloud App     and feed into the MongoDb
-  TeraafromServiceImpl: To populate the componentData mdel and send back to UI
-  TerraformCustomRepository: A MongoTemplate based repository, to do some aggrrgate group by queries against mondo db
-  
-  <h3>To build docker & mounting the application.properties while docker build</h3>
-  docker run -t -i -p port-internal:port-external -v properties_location://hygieia/config  image_name
 
 
 

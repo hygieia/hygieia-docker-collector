@@ -32,13 +32,12 @@ The <action> type attribute can be add,update,fix,remove.
 
 <document>
     <properties>
-        <title>Hygieia IAC Terraform Collector Changes</title>
+        <title>Hygieia Docker Collector Changes</title>
     </properties>
     <body>
 
-        <release version="1.0.0" date="2020-05-20" description="">
-            <action type="add" dev="prash897">Add Terraform Infra plugin</action>
-            <action type="add" dev="prash897">Mount Properties while Docker run</action>
+        <release version="1.0.0" date="2020-06-08" description="">
+            <action type="add" dev="prash897">Add Docker Collector plugin</action>
         </release>
 
     </body>

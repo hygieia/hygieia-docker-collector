@@ -25,8 +25,8 @@ import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.util.Supplier;
 
 /**
- * TerraformClient implementation that uses terrafrom apis to fetch information about
- * Terraform Organization, workspace & run job details.
+ * DockerClient implementation that uses docker apis to fetch information about
+ * Docker Organization, workspace & run job details.
  */
 
 @Component

@@ -6,7 +6,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
- * Bean to hold settings specific to the Terraform collector.
+ * Bean to hold settings specific to the Docker collector.
  */
 @Component
 @RefreshScope

@@ -31,7 +31,9 @@ import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.CPUStats;
 import com.capitalone.dashboard.model.CPUStats.CPUStatsUsage;
 import com.capitalone.dashboard.model.CPUStats.MemoryStats;
+import com.capitalone.dashboard.model.CollectionError;
 import com.capitalone.dashboard.model.Collector;
+import com.capitalone.dashboard.model.CollectorItem;
 import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.model.Container;
 import com.capitalone.dashboard.model.Container.Bridge;
@@ -58,21 +60,21 @@ import com.capitalone.dashboard.repository.TaskRepository;
 import com.capitalone.dashboard.repository.VolumeRepository;
 
 /**
- * CollectorTask that fetches Terraform(Organization, workspace, run) details
- * from Terrafrom Cloud
+ * CollectorTask that fetches Docker(Networks, Containers, Nodes, Services, Nodes, Tasks, CPUStats, Volume) details
+ * from Docker Daemon
  */
 @Component
 public class DockerCollectorTask extends CollectorTask<Collector> {
 	private static final Log LOG = LogFactory.getLog(DockerCollectorTask.class);
 
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // 2020-06-01T19:04:23Z
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-	private final DockerCollectorItemRepository terraformCollectoritemRepository;
+	private final DockerCollectorItemRepository dockerCollectoritemRepository;
 	private final CollectorItemRepository collectoritemRepository;
-	private final DefaultDockerClient terraformClient;
+	private final DefaultDockerClient dockerClient;
 	private final ComponentRepository dbComponentRepository;
 	private final BaseCollectorRepository<Collector> baseCollectorRepository;
-	private final DockerSettings terraformSetting;
+	private final DockerSettings dockerSetting;
 	private final ImageRepository imageRepository;
 	private final NetworkRepository networkRepository;
 	private final NodeRepository nodeRepository;
@@ -88,8 +90,8 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 
 	@Autowired
 	public DockerCollectorTask(TaskScheduler taskScheduler, BaseCollectorRepository<Collector> baseCollectorRepository,
-			DockerCollectorItemRepository terraformCollectoritemRepository, DefaultDockerClient terraformClient,
-			DockerSettings terraformSetting, ComponentRepository dbComponentRepository,
+			DockerCollectorItemRepository dockerCollectoritemRepository, DefaultDockerClient dockerClient,
+			DockerSettings dockerSetting, ComponentRepository dbComponentRepository,
 			CollectorItemRepository collectoritemRepository, ImageRepository imageRepository,
 			NetworkRepository networkRepository, NodeRepository nodeRepository, ProcessesRepository processesRepository,
 			 VolumeRepository volumeRepository, ContainerRepository containerRepository,
@@ -97,13 +99,13 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 		super(taskScheduler, "Docker");
 		this.cpuStatsRepository = cpuStatsRepository;
 		
-		this.terraformClient = terraformClient;
+		this.dockerClient = dockerClient;
 		this.baseCollectorRepository = baseCollectorRepository;
-		this.terraformCollectoritemRepository = terraformCollectoritemRepository;
+		this.dockerCollectoritemRepository = dockerCollectoritemRepository;
 
 		this.dbComponentRepository = dbComponentRepository;
 		this.collectoritemRepository = collectoritemRepository;
-		this.terraformSetting = terraformSetting;
+		this.dockerSetting = dockerSetting;
 		this.imageRepository = imageRepository;
 		this.networkRepository = networkRepository;
 		this.nodeRepository = nodeRepository;
@@ -114,9 +116,9 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 	}
 
 	@Override
-	public Collector getCollector() {
+	public Collector getCollector() { 
 		Collector protoType = new Collector();
-		protoType.setName("Docker");
+		protoType.setName("Docker"); // Invoked as the frequency for cron
 		protoType.setCollectorType(CollectorType.Docker);
 		protoType.setOnline(true);
 		protoType.setEnabled(true);
@@ -145,28 +147,29 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 	@Override
 	public String getCron() {
 
-		//return "* * * * * ?";
-return terraformSetting.getCron();
+		return dockerSetting.getCron();
 	}
 
 	@Override
 	public void collect(Collector collector) {
-		/*
-		
-		*//**
+			/*
 			 * Logic: Get all the collector items from the collector_item collection for
-			 * this collector. Find the organization, Workspace and run details. Save or
-			 * update in DB In case of any error add it to collection error of collector
+			 * this collector. Networks, Containers, Nodes, Services, Nodes, Tasks, CPUStats, Volume) details
+			 * from Docker Daemon. Save or update in DB In case of any error add it to collection error of collector
 			 * item
 			 */
-
+		
 		List<ObjectId> objectIds = new ArrayList<ObjectId>();
 		objectIds.add(collector.getId());
+		
+		List<CollectorItem> dockerCollectorItems = (List<CollectorItem>) collectoritemRepository.findByCollectorIdIn(objectIds);
 
-		String instanceUri = "http://3.15.29.145";
-		String instancePort = "5555";
-		String dockerApiVersion = terraformSetting.getDockerApiVersion();
-		String[] statsUri = terraformSetting.getDockerStatsUri().split(",");
+		for (CollectorItem dockerCollectorItem : dockerCollectorItems) {
+
+		String instanceUri = dockerCollectorItem.getOptions().get(INSTANCE_URL).toString().trim();
+		String instancePort = dockerCollectorItem.getOptions().get(INSTANCE_PORT).toString().trim();
+		String dockerApiVersion = dockerSetting.getDockerApiVersion();
+		String[] statsUri = dockerSetting.getDockerStatsUri().split(",");
 		JSONObject data = null;
 
 		JSONArray array = null;
@@ -180,47 +183,47 @@ return terraformSetting.getCron();
 
 				switch (uri.toUpperCase()) {
 				case "VOLUMES":
-					data = terraformClient.getDataAsObject(genericURL);
+					data = dockerClient.getDataAsObject(genericURL);
 					saveVolumeIfNotExists(data);
 					break;
 
 				case "NETWORKS":
-					array = terraformClient.getDataAsArray(genericURL);
+					array = dockerClient.getDataAsArray(genericURL);
 					saveNetworkIfNotExists(array);
 					break;
 
 				case "NODES":
-					array = terraformClient.getDataAsArray(genericURL);
+					array = dockerClient.getDataAsArray(genericURL);
 					saveNodeIfNotExists(array);
 					break;
 
 				case "TASKS":
-					array = terraformClient.getDataAsArray(genericURL);
+					array = dockerClient.getDataAsArray(genericURL);
 					saveTaskIfNotExists(array);
 					break;
 
 				case "SERVICES":
-					//data = terraformClient.getDataAsObject(genericURL);
+					//data = dockerClient.getDataAsObject(genericURL);
 					// saveServiceIfNotExists(data);
 					break;
 
 				case "CONTAINERS":
 					String URL = genericURL + "/" + "json";
-					array = terraformClient.getDataAsArray(URL);
+					array = dockerClient.getDataAsArray(URL);
 
 					List<String> ids = saveContainerIfNotExists(array);
 
 					if (ids != null) {
 						for (String containerId : ids) {
 							
-						String[] cpuInsight = terraformSetting.getDockerStatsContainerProcesses().split(",");
+						String[] cpuInsight = dockerSetting.getDockerStatsContainerProcesses().split(",");
 						for (String comands : cpuInsight) {
 
 							switch (comands.toUpperCase()) {
 
 							case "TOP":
 								URL = genericURL + "/" + containerId + "/" + comands;
-								data = terraformClient.getDataAsObject(URL);
+								data = dockerClient.getDataAsObject(URL);
 								System.out.println();
 								saveOrUpdateTopProcesses(data, containerId);
 
@@ -228,7 +231,7 @@ return terraformSetting.getCron();
 
 							case "STATS":
 								URL = genericURL + "/" + containerId + "/" + comands + "?stream=false";
-								data = terraformClient.getDataAsObject(URL);
+								data = dockerClient.getDataAsObject(URL);
 
 								saveOrUpdateCPUInfo(data);
 
@@ -248,17 +251,26 @@ return terraformSetting.getCron();
 				}
 
 			} catch (RestClientException e) {
-				e.printStackTrace();
+				LOG.error("Error fetching details for:" + e);
+				CollectionError error = new CollectionError(CollectionError.UNKNOWN_HOST, genericURL);
+				dockerCollectorItem.getErrors().add(error);
 			} catch (MalformedURLException e) {
-				e.printStackTrace();
+				LOG.error("Error fetching details for:" + e);
+				CollectionError error = new CollectionError(CollectionError.UNKNOWN_HOST, genericURL);
+				dockerCollectorItem.getErrors().add(error);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				LOG.error("Error fetching details for:" + e);
+				CollectionError error = new CollectionError(CollectionError.UNKNOWN_HOST, genericURL);
+				dockerCollectorItem.getErrors().add(error);
 			} catch (HygieiaException e) {
-
+				LOG.error("Error fetching details for:" + e);
+				CollectionError error = new CollectionError(CollectionError.UNKNOWN_HOST, genericURL);
+				dockerCollectorItem.getErrors().add(error);
 			}
 
 		}
-
+		
+		}
 	}
 
 	private List<String> saveContainerIfNotExists(JSONArray jsonArray) {
@@ -425,7 +437,7 @@ return terraformSetting.getCron();
 
 	private void saveVolumeIfNotExists(JSONObject data) throws ParseException {
 
-		JSONArray jsonArray = terraformClient.getJSONArray(data, "Volumes");
+		JSONArray jsonArray = dockerClient.getJSONArray(data, "Volumes");
 		JSONObject jsonObject = null;
 		if (jsonArray != null) {
 			for (int i = 0; i < jsonArray.size(); i++) {

@@ -1,6 +1,6 @@
 package com.capitalone.dashboard.enums;
 
-/*The Status specific to the Hygieia Terraform Collector*/
+/*The Status specific to the Hygieia Docker Collector*/
 public enum STATUS {
 	
 	  IGNORE,

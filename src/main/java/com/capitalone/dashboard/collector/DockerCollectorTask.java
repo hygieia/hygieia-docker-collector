@@ -124,16 +124,9 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 		protoType.setEnabled(true);
 
 		Map<String, Object> allOptions = new HashMap<>();
-		allOptions.put(API_TOKEN, "");
-		allOptions.put(INSTANCE_PORT, "");
-		allOptions.put(INSTANCE_URL, "");
 		protoType.setAllFields(allOptions);
 
 		Map<String, Object> uniqueOptions = new HashMap<>();
-		uniqueOptions.put(API_TOKEN, "");
-		uniqueOptions.put(INSTANCE_PORT, "");
-		uniqueOptions.put(INSTANCE_URL, "");
-
 		protoType.setUniqueFields(uniqueOptions);
 
 		return protoType;

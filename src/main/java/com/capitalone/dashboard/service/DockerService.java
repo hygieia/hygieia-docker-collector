@@ -2,16 +2,16 @@ package com.capitalone.dashboard.service;
 
 import com.capitalone.dashboard.model.ComponentData;
 
-public interface DockerService {
+ public interface DockerService {
 	
-	public ComponentData getDockerMetaCount();
+	 ComponentData getDockerMetaCount();
 	
-	public ComponentData getDockerMetaAggregate(String meta, String status, String timeline, Integer range);
+	 ComponentData getDockerMetaAggregate(String meta, String status, String timeline, Integer range);
 	
-	public ComponentData getDockerMetaData();
+	 ComponentData getDockerMetaData();
 	
-	public ComponentData getContainerProcessesTopRoute(String containerId);
+	 ComponentData getContainerProcessesTopRoute(String containerId);
 	
-	public ComponentData getDockerCpuStats(); 
+	 ComponentData getDockerCpuStats(); 
 
 }

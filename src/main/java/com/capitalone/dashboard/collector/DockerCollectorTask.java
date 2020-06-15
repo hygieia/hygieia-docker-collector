@@ -1,8 +1,6 @@
 
 package com.capitalone.dashboard.collector;
 
-// Import Static
-import static com.capitalone.dashboard.model.DockerCollectorItem.API_TOKEN;
 import static com.capitalone.dashboard.model.DockerCollectorItem.INSTANCE_PORT;
 import static com.capitalone.dashboard.model.DockerCollectorItem.INSTANCE_URL;
 
@@ -14,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,6 +42,10 @@ import com.capitalone.dashboard.model.Node;
 import com.capitalone.dashboard.model.Node.ManagerStatus;
 import com.capitalone.dashboard.model.Node.Spec;
 import com.capitalone.dashboard.model.Processes;
+import com.capitalone.dashboard.model.Service;
+import com.capitalone.dashboard.model.Service.Endpoint;
+import com.capitalone.dashboard.model.Service.Endpoint.Ports;
+import com.capitalone.dashboard.model.Service.Endpoint.VirtualIPs;
 import com.capitalone.dashboard.model.Task;
 import com.capitalone.dashboard.model.Task.Status;
 import com.capitalone.dashboard.model.Volume;
@@ -56,6 +59,7 @@ import com.capitalone.dashboard.repository.ImageRepository;
 import com.capitalone.dashboard.repository.NetworkRepository;
 import com.capitalone.dashboard.repository.NodeRepository;
 import com.capitalone.dashboard.repository.ProcessesRepository;
+import com.capitalone.dashboard.repository.ServiceRepository;
 import com.capitalone.dashboard.repository.TaskRepository;
 import com.capitalone.dashboard.repository.VolumeRepository;
 
@@ -77,6 +81,7 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 	private final DockerSettings dockerSetting;
 	private final ImageRepository imageRepository;
 	private final NetworkRepository networkRepository;
+	private final ServiceRepository serviceRepository;
 	private final NodeRepository nodeRepository;
 	private final ProcessesRepository processesRepository;
 	private final TaskRepository taskRepository;
@@ -95,7 +100,7 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 			CollectorItemRepository collectoritemRepository, ImageRepository imageRepository,
 			NetworkRepository networkRepository, NodeRepository nodeRepository, ProcessesRepository processesRepository,
 			 VolumeRepository volumeRepository, ContainerRepository containerRepository,
-			 CPUStatsRepository cpuStatsRepository,TaskRepository taskRepository) {
+			 CPUStatsRepository cpuStatsRepository,TaskRepository taskRepository,  ServiceRepository serviceRepository) {
 		super(taskScheduler, "Docker");
 		this.cpuStatsRepository = cpuStatsRepository;
 		
@@ -113,6 +118,7 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 		this.taskRepository = taskRepository;
 		this.volumeRepository = volumeRepository;
 		this.containerRepository = containerRepository;
+		this.serviceRepository = serviceRepository;
 	}
 
 	@Override
@@ -196,8 +202,8 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 					break;
 
 				case "SERVICES":
-					//data = dockerClient.getDataAsObject(genericURL);
-					// saveServiceIfNotExists(data);
+					array = dockerClient.getDataAsArray(genericURL);
+					 saveServiceIfNotExists(array);
 					break;
 
 				case "CONTAINERS":
@@ -512,5 +518,59 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 		}
 	}
 
+	private void saveServiceIfNotExists(JSONArray jsonArray) throws ParseException {
+		JSONObject jsonObject = null;
+		if (jsonArray != null) {
+			for (int i = 0; i < jsonArray.size(); i++) {
+				jsonObject = (JSONObject) jsonArray.get(i);
+				String id = (String) jsonObject.get("ID");
+				Service service = serviceRepository.findByServiceId(id);
+				
+				if (service == null) {
+					service = new Service();
+				}
+				service.setCreatedAt((dateFormat.parse((String) jsonObject.get("CreatedAt"))));
+				service.setUpdatedAt((dateFormat.parse((String) jsonObject.get("UpdatedAt"))));
+				
+				
+				JSONObject endpointObj = (JSONObject) jsonObject.get("Endpoint");
+
+				Endpoint endpoint = service.new Endpoint();
+				
+				JSONArray portsArray = (JSONArray) endpointObj.get("Ports");
+					
+				if (portsArray != null) {
+					for (int k = 0; k < portsArray.size(); k++) {
+						JSONObject portObj = (JSONObject) portsArray.get(k);
+
+						Ports ports = endpoint.new Ports();
+						ports.setProtocol((String)portObj.get("Protocol"));
+						ports.setPublishedPort((String)portObj.get("PublishedPort"));
+						ports.setTargetPort((String)portObj.get("TargetPort"));
+						endpoint.getPorts().add(ports);
+					}
+					}
+					
+				
+				JSONArray virtualArray = (JSONArray) endpointObj.get("VirtualIPs");
+				
+				if (virtualArray != null) {
+					for (int k = 0; k < virtualArray.size(); k++) {
+						JSONObject virtualObj = (JSONObject) virtualArray.get(k);
+						
+						VirtualIPs virtualsObj = endpoint.new VirtualIPs();
+						virtualsObj.setAddr((String)virtualObj.get("Addr"));
+						virtualsObj.setNetworkID((String)virtualObj.get("NetworkID"));
+						endpoint.getVirtualIPs().add(virtualsObj);
+					}
+				}
+				
+				service.getEndpoints().add(endpoint);
+				
+				serviceRepository.save(service); 
+			}
+		}
+	}
+	
 
 }

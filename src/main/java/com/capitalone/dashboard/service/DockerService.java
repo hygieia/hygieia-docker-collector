@@ -6,11 +6,7 @@ import com.capitalone.dashboard.model.ComponentData;
 	
 	 ComponentData getDockerMetaCount();
 	
-	 ComponentData getDockerMetaAggregate(String meta, String status, String timeline, Integer range);
-	
 	 ComponentData getDockerMetaData();
-	
-	 ComponentData getContainerProcessesTopRoute(String containerId);
 	
 	 ComponentData getDockerCpuStats(); 
 

@@ -37,24 +37,12 @@ public class DockerController {
 		return ResponseEntity.ok(dockerService.getDockerMetaData());
 	}
 	
-	@RequestMapping(value = "/collector/docker/container/processes/top", method = GET, produces = APPLICATION_JSON_VALUE)
-	public ResponseEntity<ComponentData> getContainerProcessesTopRoute(@RequestParam(name = "containerId") String containerId) {
-		LOG.debug("Call Recieved @ /collector/docker/container/processes/top :: ");
-		return ResponseEntity.ok(dockerService.getContainerProcessesTopRoute(containerId));
-	}
-	
+	 
 	@RequestMapping(value = "/collector/docker/cpu/stats", method = GET, produces = APPLICATION_JSON_VALUE)
 	public ResponseEntity<ComponentData> getDockerCpuStats() {
 		LOG.debug("Call Recieved @ /collector/docker/cpu/stats :: ");
 		return ResponseEntity.ok(dockerService.getDockerCpuStats());
 	}
 
-	@RequestMapping(value = "/collector/docker/meta/aggregate", method = GET, produces = APPLICATION_JSON_VALUE)
-	public ResponseEntity<ComponentData> getDockerMetaAggregate(@RequestParam String meta,
-			@RequestParam String status, @RequestParam String timeline, @RequestParam Integer range) {
-		LOG.debug("Call Recieved @ /collector/docker/meta/aggregate :: Params - Workspace :" + meta + ", status: "
-				+ status + ", timeline" + timeline + ", range: " + range);
-		return ResponseEntity.ok(dockerService.getDockerMetaAggregate(meta, status, timeline, range));
-	}
-
+	
 }

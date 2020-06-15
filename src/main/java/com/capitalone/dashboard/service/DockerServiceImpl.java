@@ -87,13 +87,7 @@ public class DockerServiceImpl implements DockerService {
 		return componentData;
 	}
 	
-	@Override
-	public ComponentData getDockerMetaAggregate(String meta, String status, String timeline, Integer range) {
-		ComponentData componentData = new ComponentData();
 
-		return componentData;
-	}
-	
 	@Override
 	public ComponentData getDockerMetaData() {
 		ComponentData componentData = new ComponentData();
@@ -143,12 +137,6 @@ public class DockerServiceImpl implements DockerService {
 		return componentData;
 	}
 	
-	@Override
-	public ComponentData getContainerProcessesTopRoute(String containerId) {
-		ComponentData componentData = new ComponentData();
-
-		return componentData;
-	}
 	
 	@Override
 	public ComponentData getDockerCpuStats() {

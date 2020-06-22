@@ -13,7 +13,7 @@ https://docs.docker.com/engine/api/v1.24/
 
 <h3>How is Docker App Organized?</h3>
  Each Docker app has Daemon
-  The Daemon facillitates the API
+  The Daemon facilitates the API
   Down end the APIS are given.
 
 <h3>Technical Description</h3>

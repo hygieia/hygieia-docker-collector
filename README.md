@@ -7,7 +7,7 @@
 [![Gitter Chat](https://badges.gitter.im/Join%20Chat.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 <br>
 <br>
-
+<h3>hygieia-docker-collector</h3>
 <h3>A collector to showcase the Docker Container details</h3>
 https://docs.docker.com/engine/api/v1.24/
 

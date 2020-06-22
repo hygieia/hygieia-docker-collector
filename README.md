@@ -1,10 +1,19 @@
 
+[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Build Status](https://travis-ci.com/Hygieia/hygieia-docker-collector.svg?branch=docker-collector)](https://travis-ci.com/Hygieia/hygieia-docker-collector)
+[![Maven Central](https://img.shields.io/maven-central/v/com.capitalone.dashboard/hygieia-docker-collector.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.capitalone.dashboard%22%20AND%20a:%22hygieia-docker-collector%22)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/Hygieia/hygieia-docker-collector.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Hygieia/hygieia-docker-collector/alerts/)
+[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/Hygieia/hygieia-docker-collector.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Hygieia/hygieia-docker-collector/context:java)
+[![Gitter Chat](https://badges.gitter.im/Join%20Chat.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+<br>
+<br>
+
 <h3>A collector to showcase the Docker Container details</h3>
 https://docs.docker.com/engine/api/v1.24/
 
 <h3>How is Docker App Organized?</h3>
  Each Docker app has Daemon
-  The Daemon facillitates the API
+  The Daemon facilitates the API
   Down end the APIS are given.
 
 <h3>Technical Description</h3>

@@ -20,30 +20,15 @@
     <url>https://www.github.com/Hygieia/</url>
   </organization>
 
-  <scm>
-    <connection>scm:git:https://github.com/Hygieia/hygieia-docker-collector.git</connection>
-    <developerConnection>scm:git:https://github.com/Hygieia/hygieia-docker-collector.git
-    </developerConnection>
-    <url>https://github.com/Hygieia/hygieia-docker-collector</url>
-  </scm>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-    <site>
-      <id>c1.maven.plugins.website</id>
-      <name>Capital One Maven Plugins Site</name>
-      <url>scm:git:https://${github.username}@github.com/Hygieia/hygieia-docker-collector</url>
-    </site>
-  </distributionManagement>
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
 
   <properties>
+    <repository.name>hygieia-docker-collector</repository.name>
     <apache.rat.plugin.version>0.13</apache.rat.plugin.version>
     <bc.version>3.0.1</bc.version>
     <com.capitalone.dashboard.core.version>3.7.5</com.capitalone.dashboard.core.version>
@@ -77,11 +62,6 @@
     <svnkit.version>1.8.7</svnkit.version>
   </properties>
 
-  <issueManagement>
-    <system>github</system>
-    <url>https://github.com/Hygieia/hygieia-docker-collector/issues</url>
-  </issueManagement>
-
   <developers>
     <developer>
       <name>Prashant Chouhan</name>
@@ -90,6 +70,34 @@
       <organizationUrl>https://www.wipro.com</organizationUrl>
     </developer>
   </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/Hygieia/${repository.name}.git</connection>
+    <developerConnection>scm:git:https://github.com/Hygieia/${repository.name}.git
+    </developerConnection>
+    <url>https://github.com/Hygieia/${repository.name}</url>
+  </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+    <site>
+      <id>c1.maven.plugins.website</id>
+      <name>Capital One Maven Plugins Site</name>
+      <url>scm:git:https://${github.username}@github.com/Hygieia/${repository.name}</url>
+    </site>
+  </distributionManagement>
+
+  <issueManagement>
+    <system>github</system>
+    <url>https://github.com/Hygieia/hygieia-docker-collector/issues</url>
+  </issueManagement>
 
   <dependencies>
     <dependency>
@@ -182,13 +190,28 @@
   </dependencies>
 
   <build>
-    <defaultGoal>clean verify apache-rat:check japicmp:cmp checkstyle:check spotbugs:check javadoc:javadoc</defaultGoal>
-    <finalName>${artifactId}</finalName>
     <plugins>
       <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <finalName>${project.artifactId}-${project.version}</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+            <phase>package</phase> <!-- bind to the packaging phase -->
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -198,38 +221,26 @@
           <target>${java.compilation.target}</target>
         </configuration>
       </plugin>
+      <!-- will uncomment once few versions are present -->
+      <!--<plugin>
+          <groupId>com.github.siom79.japicmp</groupId>
+          <artifactId>japicmp-maven-plugin</artifactId>
+          <version>0.13.1</version>
+          <configuration>
+              <parameter>
+
+              </parameter>
+          </configuration>
+          <executions>
+              <execution>
+                  <phase>verify</phase>
+                  <goals>
+                      <goal>cmp</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin> -->
       <plugin>
-        <groupId>com.github.siom79.japicmp</groupId>
-        <artifactId>japicmp-maven-plugin</artifactId>
-        <version>0.13.1</version>
-        <configuration>
-          <oldVersion>
-            <dependency>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>${project.artifactId}</artifactId>
-              <version>${bc.version}</version>
-              <type>jar</type>
-            </dependency>
-          </oldVersion>
-          <newVersion>
-            <file>
-              <path>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</path>
-            </file>
-          </newVersion>
-          <parameter>
-            <onlyModified>true</onlyModified>
-            <breakBuildOnBinaryIncompatibleModifications>${japicmp.breakBuildOnBinaryIncompatibleModifications}</breakBuildOnBinaryIncompatibleModifications>
-            <breakBuildOnSourceIncompatibleModifications>${japicmp.breakBuildOnSourceIncompatibleModifications}</breakBuildOnSourceIncompatibleModifications>
-            <!-- skip japicmp on "mvn site" - use "mvn package site" to include report -->
-            <ignoreMissingNewVersion>true</ignoreMissingNewVersion>
-            <reportOnlyFilename>true</reportOnlyFilename>
-            <skipPomModules>true</skipPomModules>
-            <ignoreMissingClasses>false</ignoreMissingClasses>
-          </parameter>
-          <skip>${japicmp.skip}</skip>
-        </configuration>
-      </plugin>
-       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven.checkstyle.plugin.version}</version>
@@ -238,10 +249,10 @@
           <suppressionsLocation>src/devops/checkstyle-suppressions.xml</suppressionsLocation>
           <encoding>UTF-8</encoding>
           <consoleOutput>false</consoleOutput>
-          <failsOnError>true</failsOnError>
+          <failsOnError>false</failsOnError>
           <linkXRef>false</linkXRef>
         </configuration>
-       <!-- <executions>
+        <executions>
           <execution>
             <id>validate</id>
             <phase>validate</phase>
@@ -249,7 +260,7 @@
               <goal>check</goal>
             </goals>
           </execution>
-        </executions> -->
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.rat</groupId>
@@ -257,10 +268,9 @@
         <version>${apache.rat.plugin.version}</version>
         <configuration>
           <excludes>
-            <exclude>**.tests/**</exclude>
-            <exclude>**logs/**</exclude>
-            <exclude>**site-content/**</exclude>
-            <exclude>RELEASE-NOTES.txt</exclude>
+            <exclude>.tests/**</exclude>
+            <exclude>.tests/**</exclude>
+            <exclude>logs/**</exclude>
             <exclude>src/test/resources/org/tmatesoft/svn/test/apache.config.template</exclude>
             <exclude>src/test/resources/org/tmatesoft/svn/test/test.properties.template</exclude>
             <exclude>src/test/resources/org/tmatesoft/svn/test/svnserve.config.template</exclude>
@@ -283,22 +293,6 @@
             <ruleset>src/devops/pmd.xml</ruleset>
           </rulesets>
           <targetJdk>${java.compilation.target}</targetJdk>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.spotify</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <configuration>
-          <skipDockerBuild>false</skipDockerBuild>
-          <imageName>hygieia-docker-collector</imageName>
-          <dockerDirectory>${project.basedir}/docker</dockerDirectory>
-          <resources>
-            <resource>
-              <targetPath>/</targetPath>
-              <directory>${project.build.directory}</directory>
-              <include>${project.build.finalName}.jar</include>
-            </resource>
-          </resources>
         </configuration>
       </plugin>
       <plugin>
@@ -389,6 +383,33 @@
           <skipDeploy>true</skipDeploy>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.2</version>
+        <executions>
+          <execution>
+            <id>default-deploy</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>deploy</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.8</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>false</autoReleaseAfterClose>
+          <autoDropAfterRelease>false</autoDropAfterRelease>
+          <stagingProfileId>26a9600c05a6d3</stagingProfileId>
+        </configuration>
+      </plugin>
     </plugins>
     <testResources>
       <testResource>
@@ -404,7 +425,9 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${maven.javadoc.plugin.version}</version>
         <configuration>
-          <extdirs>src/test</extdirs>
+          <failOnError>false</failOnError>
+          <failOnWarnings>false</failOnWarnings>
+          <excludes>**/*Test*.java</excludes>
         </configuration>
       </plugin>
       <plugin>
@@ -440,30 +463,6 @@
         <groupId>com.github.siom79.japicmp</groupId>
         <artifactId>japicmp-maven-plugin</artifactId>
         <version>0.13.1</version>
-        <configuration>
-          <oldVersion>
-            <dependency>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>${project.artifactId}</artifactId>
-              <version>${bc.version}</version>
-              <type>jar</type>
-            </dependency>
-          </oldVersion>
-          <newVersion>
-            <file>
-              <path>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</path>
-            </file>
-          </newVersion>
-          <parameter>
-            <onlyModified>true</onlyModified>
-            <breakBuildOnBinaryIncompatibleModifications>${japicmp.breakBuildOnBinaryIncompatibleModifications}</breakBuildOnBinaryIncompatibleModifications>
-            <breakBuildOnSourceIncompatibleModifications>${japicmp.breakBuildOnSourceIncompatibleModifications}</breakBuildOnSourceIncompatibleModifications>
-            <!-- skip japicmp on "mvn site" - use "mvn package site" to include report -->
-            <skipPomModules>true</skipPomModules>
-            <ignoreMissingNewVersion>true</ignoreMissingNewVersion>
-            <reportOnlyFilename>true</reportOnlyFilename>
-          </parameter>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.rat</groupId>
@@ -471,10 +470,8 @@
         <version>${apache.rat.plugin.version}</version>
         <configuration>
           <excludes>
-            <exclude>**.tests/**</exclude>
-            <exclude>**logs/**</exclude>
-            <exclude>**site-content/**</exclude>
-            <exclude>RELEASE-NOTES.txt</exclude>
+            <exclude>.tests/**</exclude>
+            <exclude>logs/**</exclude>
             <exclude>src/test/resources/org/tmatesoft/svn/test/apache.config.template</exclude>
             <exclude>src/test/resources/org/tmatesoft/svn/test/test.properties.template</exclude>
             <exclude>src/test/resources/org/tmatesoft/svn/test/svnserve.config.template</exclude>
@@ -525,10 +522,8 @@
           <onlyCurrentVersion>false</onlyCurrentVersion>
           <maxEntries>100</maxEntries>
           <runOnlyAtExecutionRoot>false</runOnlyAtExecutionRoot>
-          <template>release-notes.vm</template>
-          <templateDirectory>src/changes</templateDirectory>
           <issueLinkTemplatePerSystem>
-            <github>http://github.com/Hygieia/hygieia-docker-collector/issues/%ISSUE%</github>
+            <github>http://github.com/Hygieia/hygieia-subversion-scm-collector/issues/%ISSUE%</github>
           </issueLinkTemplatePerSystem>
         </configuration>
         <reportSets>
@@ -616,7 +611,7 @@
               <announcementDirectory>.</announcementDirectory>
               <announcementFile>RELEASE-NOTES.txt</announcementFile>
               <announceParameters>
-                <releaseVersion>${version}</releaseVersion>
+                <releaseVersion>${project.version}</releaseVersion>
               </announceParameters>
             </configuration>
             <executions>
@@ -625,71 +620,6 @@
                 <phase>generate-resources</phase>
                 <goals>
                   <goal>announcement-generate</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>test-deploy</id>
-      <properties>
-        <altDeploymentRepository>id::default::file:target/deploy</altDeploymentRepository>
-      </properties>
-    </profile>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.5.1</version>
-            <configuration>
-              <source>1.8</source>
-              <target>1.8</target>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>3.0.1</version>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>${maven.javadoc.plugin.version}</version>
-            <configuration>
-              <doclint>none</doclint>
-            </configuration>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.5</version>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
                 </goals>
               </execution>
             </executions>
@@ -761,8 +691,71 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>release</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.5.1</version>
+            <configuration>
+              <source>1.8</source>
+              <target>1.8</target>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.0.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven.javadoc.plugin.version}</version>
+            <configuration>
+              <doclint>none</doclint>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
-
-
 
 </project>

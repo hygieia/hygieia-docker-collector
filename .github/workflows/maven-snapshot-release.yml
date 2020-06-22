@@ -3,7 +3,7 @@ name: Release Snapshot
 on:
   push:
     branches:
-      - master
+      - docker-collector
 
 jobs:
   build:

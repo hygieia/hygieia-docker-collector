@@ -70,8 +70,8 @@ public class DockerServiceImpl implements DockerService {
 	public ComponentData getDockerMetaCount() {
 		// TODO Auto-generated method stub
 		CrudRepository[] obj = { networkRepository, nodeRepository, containerRepository, imageRepository,
-				processesRepository, taskRepository };
-		String[] names = { "Network", "Node", "Container", "Image", "Processes", "Task" };
+				processesRepository };
+		String[] names = { "Network", "Node", "Container", "Image", "Processes" };
 		int i = 0;
 		ComponentData componentData = new ComponentData();
 		List<Series> data = new ArrayList<Series>();

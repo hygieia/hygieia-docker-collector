@@ -4,47 +4,26 @@ import java.util.Date;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection="networks")
+@Document(collection="images")
 public class Image extends BaseModel{
 	
-	private String containerId;
 	
-	private String[] names;
-	
-	private String image;
-	
-	private String ImageId;
-	private Date created;
+	private String imageId;
+	private Long created;
 	private String state;
-	private String status;
-	public String getContainerId() {
-		return containerId;
-	}
-	public void setContainerId(String containerId) {
-		this.containerId = containerId;
-	}
-	public String[] getNames() {
-		return names;
-	}
-	public void setNames(String[] names) {
-		this.names = names;
-	}
-	public String getImage() {
-		return image;
-	}
-	public void setImage(String image) {
-		this.image = image;
-	}
+	private Long size;
+	private Long virtualSize;
+	 
 	public String getImageId() {
-		return ImageId;
+		return imageId;
 	}
 	public void setImageId(String imageId) {
-		ImageId = imageId;
+		this.imageId = imageId;
 	}
-	public Date getCreated() {
+	public Long getCreated() {
 		return created;
 	}
-	public void setCreated(Date created) {
+	public void setCreated(Long created) {
 		this.created = created;
 	}
 	public String getState() {
@@ -53,12 +32,19 @@ public class Image extends BaseModel{
 	public void setState(String state) {
 		this.state = state;
 	}
-	public String getStatus() {
-		return status;
+	public Long getSize() {
+		return size;
 	}
-	public void setStatus(String status) {
-		this.status = status;
+	public void setSize(Long size) {
+		this.size = size;
 	}
+	public Long getVirtualSize() {
+		return virtualSize;
+	}
+	public void setVirtualSize(Long virtualSize) {
+		this.virtualSize = virtualSize;
+	}
+	 
 	
 	
 	

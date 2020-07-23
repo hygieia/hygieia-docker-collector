@@ -4,6 +4,10 @@ package com.capitalone.dashboard.collector;
 import static com.capitalone.dashboard.model.DockerCollectorItem.INSTANCE_PORT;
 import static com.capitalone.dashboard.model.DockerCollectorItem.INSTANCE_URL;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,7 +16,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,6 +40,7 @@ import com.capitalone.dashboard.model.CollectorType;
 import com.capitalone.dashboard.model.Container;
 import com.capitalone.dashboard.model.Container.Bridge;
 import com.capitalone.dashboard.model.Container.Mount;
+import com.capitalone.dashboard.model.Image;
 import com.capitalone.dashboard.model.Network;
 import com.capitalone.dashboard.model.Node;
 import com.capitalone.dashboard.model.Node.ManagerStatus;
@@ -203,11 +207,17 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 
 				case "SERVICES":
 					array = dockerClient.getDataAsArray(genericURL);
-					 saveServiceIfNotExists(array);
+					 //saveServiceIfNotExists(array);
 					break;
+					
+				case "IMAGES":
+					String IURL = genericURL + "/" + "json?all=1";
+					array = dockerClient.getDataAsArray(IURL);
 
+					saveImageIfNotExists(array);
+					break;
 				case "CONTAINERS":
-					String URL = genericURL + "/" + "json";
+					String URL = genericURL + "/" + "json?all=1";
 					array = dockerClient.getDataAsArray(URL);
 
 					List<String> ids = saveContainerIfNotExists(array);
@@ -265,6 +275,12 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 				LOG.error("Error fetching details for:" + e);
 				CollectionError error = new CollectionError(CollectionError.UNKNOWN_HOST, genericURL);
 				dockerCollectorItem.getErrors().add(error);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 		}
@@ -272,7 +288,28 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 		}
 	}
 
-	private List<String> saveContainerIfNotExists(JSONArray jsonArray) {
+	private void saveImageIfNotExists(JSONArray jsonArray) throws ClassNotFoundException, IOException {
+		// TODO Auto-generated method stub
+		JSONObject jsonObject = null;
+		List<String> ids = new ArrayList<String>();
+		if (jsonArray != null) {
+			for (int i = 0; i < jsonArray.size(); i++) {
+				jsonObject = (JSONObject) jsonArray.get(i);
+				String Id = (String) jsonObject.get("Id");
+				
+				Image image = imageRepository.findByImageId(Id);
+				if(image == null)
+					image =  new Image();
+				image.setImageId(Id);
+				image.setCreated(((Long) jsonObject.get("Created")));
+				image.setSize(((Long) jsonObject.get("Size")));
+				image.setVirtualSize(((Long) jsonObject.get("VirtualSize")));
+				imageRepository.save(image);
+			}
+		}
+	}
+
+	private List<String> saveContainerIfNotExists(JSONArray jsonArray) throws ClassNotFoundException, IOException {
 
 		JSONObject jsonObject = null;
 		List<String> ids = new ArrayList<String>();
@@ -286,8 +323,13 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 					container = new Container();
 				}
 				 container.setStatus(jsonObject.get("Status").toString());
-				 //container.setNames(  (String[]) jsonObject.get("Names"));
-
+				/*
+				 * Object objNames = (Object)
+				 * getObject(jsonObject.get("Names").toString().getBytes());
+				 * 
+				 * String[] names = (String[]) objNames; if(names != null && names.length >0)
+				 * container.setNames( names);
+				 */
 				 container.setContainerId(Id);
 				 container.setImage(jsonObject.get("Image").toString());
 				 container.setState(jsonObject.get("State").toString());
@@ -341,6 +383,12 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 
 	}
 
+	
+	 private static Object getObject(byte[] byteArr) throws IOException, ClassNotFoundException {
+		    ByteArrayInputStream bis = new ByteArrayInputStream(byteArr);
+		    ObjectInput in = new ObjectInputStream(bis);
+		    return in.readObject();
+	}
 	/**
 	 * @param jsonArray
 	 * @throws ParseException 
@@ -357,7 +405,7 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 				if (node == null) {
 					node = new Node();
 				}
-
+				node.setNodeId(nodeId);
 				node.setCreatedat((dateFormat.parse(((String) jsonObject.get("CreatedAt")).substring(0,19))));
 				node.setUpdatedat((dateFormat.parse(((String) jsonObject.get("UpdatedAt")).substring(0,19))));
 				
@@ -457,7 +505,7 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 			}
 
 		}
-
+		
 	}
 
 	private void saveTaskIfNotExists(JSONArray jsonArray) throws ParseException {
@@ -466,7 +514,7 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 		if (jsonArray != null) {
 			for (int i = 0; i < jsonArray.size(); i++) {
 				jsonObject = (JSONObject) jsonArray.get(i);
-				String Id = (String) jsonObject.get("NodeID");
+				String Id = (String) jsonObject.get("ID");
 				Task task = null;
 				 taskRepository.findByTaskId(Id);
 
@@ -474,7 +522,7 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 					task = new Task();
 				}
 				JSONObject statusObj = (JSONObject) jsonObject.get("Status");
-
+				task.setTaskId(Id);
 				Status status = task.new Status();
 
 				status.setMessage(statusObj.get("Message").toString());
@@ -500,7 +548,7 @@ public class DockerCollectorTask extends CollectorTask<Collector> {
 				jsonObject = (JSONObject) jsonArray.get(i);
 				String name = (String) jsonObject.get("Name");
 				String id = (String) jsonObject.get("Id");
-				Network network = networkRepository.findByNetworkId(name);
+				Network network = networkRepository.findByNetworkId(id);
 
 				if (network == null) {
 					network = new Network();

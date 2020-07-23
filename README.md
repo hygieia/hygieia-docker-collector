@@ -16,8 +16,11 @@ https://docs.docker.com/engine/api/v1.24/
   <h3>To build docker & mounting the application.properties while docker build</h3>
   docker run -t -i -p port-internal:port-external -v properties_location://hygieia/config  image_name
 
+To find the by CollectorId in Collector Items
+db.getCollection('collector_items').find({"collectorId" : ObjectId("5eddd00ddfdae82a2cd6254f")})
 
-
+<h3> Docker Hub</h3>
+https://hub.docker.com/search?q=hello&type=image
 
 docker network create -d bridge my-bridge-network
 

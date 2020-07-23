@@ -11,6 +11,6 @@ import com.capitalone.dashboard.model.Node;
 public interface ImageRepository<T extends Image> extends CrudRepository<T, ObjectId> {
 
 	@Query(value = "{'imageId': ?0}")
-	public Node findByImageId(String imageId);
+	public Image findByImageId(String imageId);
 
 }

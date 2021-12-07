@@ -5,7 +5,7 @@
   <artifactId>hygieia-docker-collector</artifactId>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Docker Cloud App Collector</description>
-  <url>https://hygieia.github.io/Hygieia/getting_started.html</url>
+  <url>https://hygieia.github.io/hygieia/getting_started.html</url>
   <packaging>jar</packaging>
   <version>1.0.0-SNAPSHOT</version>
 

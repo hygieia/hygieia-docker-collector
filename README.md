@@ -1,4 +1,4 @@
-
+## Due to lack of activity, this repo is currently not being supported and is archived as of 07/12/22. Please note since archival, the project is not maintained and will be available in a read-only state. Please reach out to hygieia2@capitalone.com should you have any questions.
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Build Status](https://travis-ci.com/Hygieia/hygieia-docker-collector.svg?branch=docker-collector)](https://travis-ci.com/Hygieia/hygieia-docker-collector)
 [![Maven Central](https://img.shields.io/maven-central/v/com.capitalone.dashboard/hygieia-docker-collector.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.capitalone.dashboard%22%20AND%20a:%22hygieia-docker-collector%22)
